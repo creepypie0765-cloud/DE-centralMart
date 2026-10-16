@@ -46,11 +46,14 @@ def positive(value):
     return number
 
 
-def run(rows, threads, repeats):
-    data, results = ROOT / "data", ROOT / "results"
-    data.mkdir(exist_ok=True)
-    results.mkdir(exist_ok=True)
-    csv_file, parquet_file = data / "sales.csv", data / "sales.parquet"
+def generate_data(data, rows, threads):
+    generate_references(data, threads)
+    generate_orders(data, rows, threads)
+
+
+def generate_references(data, threads):
+    data = Path(data)
+    data.mkdir(parents=True, exist_ok=True)
     with duckdb.connect(config={"threads": threads, "memory_limit": "1GB"}) as con:
         con.execute("""CREATE TABLE stores AS SELECT * FROM (VALUES
             (1, 'Central Mart Delhi', 'Delhi'),
@@ -68,6 +71,13 @@ def run(rows, threads, repeats):
         ) AS t(product_id, product_name, category, unit_price_paise)""")
         for table in ('stores', 'products'):
             con.execute(f"COPY {table} TO {sql_path(data / (table + '.csv'))} (HEADER, FORMAT CSV)")
+
+
+def generate_orders(data, rows, threads):
+    data = Path(data)
+    data.mkdir(parents=True, exist_ok=True)
+    csv_file = data / "sales.csv"
+    with duckdb.connect(config={"threads": threads, "memory_limit": "1GB"}) as con:
         # SQL range generates rows inside the engine, without a huge Python list.
         # Integer arithmetic makes the synthetic dataset reproducible.
         print(f"Generating {rows:,} synthetic orders...")
@@ -86,6 +96,12 @@ def run(rows, threads, repeats):
                 FROM range({rows}) AS t(i)
             ) TO {sql_path(csv_file)} (FORMAT CSV, HEADER)
         """)
+
+
+def convert_data(data, threads):
+    data = Path(data)
+    csv_file, parquet_file = data / "sales.csv", data / "sales.parquet"
+    with duckdb.connect(config={"threads": threads, "memory_limit": "1GB"}) as con:
         csv_source = f"""read_csv({sql_path(csv_file)}, header=true, columns={{
             'order_id':'BIGINT','order_date':'DATE','store_id':'INTEGER',
             'product_id':'INTEGER','quantity':'INTEGER',
@@ -94,6 +110,19 @@ def run(rows, threads, repeats):
         con.execute(f"""COPY (SELECT * FROM {csv_source})
             TO {sql_path(parquet_file)}
             (FORMAT PARQUET, COMPRESSION ZSTD, ROW_GROUP_SIZE 122880)""")
+
+
+def analyze_data(data, results, rows, threads, repeats):
+    data, results = Path(data), Path(results)
+    results.mkdir(parents=True, exist_ok=True)
+    csv_file, parquet_file = data / "sales.csv", data / "sales.parquet"
+    with duckdb.connect(config={"threads": threads, "memory_limit": "1GB"}) as con:
+        for table in ('stores', 'products'):
+            con.execute(f"CREATE TABLE {table} AS SELECT * FROM read_csv_auto({sql_path(data / (table + '.csv'))})")
+        csv_source = f"""read_csv({sql_path(csv_file)}, header=true, columns={{
+            'order_id':'BIGINT','order_date':'DATE','store_id':'INTEGER',
+            'product_id':'INTEGER','quantity':'INTEGER',
+            'discount_pct':'INTEGER','status':'VARCHAR'}})"""
         sources = {"CSV": csv_source, "Parquet": f"read_parquet({sql_path(parquet_file)})"}
         benchmarks, expected = [], {}
         for format_name, source in sources.items():
@@ -178,10 +207,18 @@ so this is a final-status sales report, not an accounting cash-flow ledger.
         print(f"Reports saved to {results}")
 
 
+def run(rows, threads, repeats, output_dir=None):
+    root = Path(output_dir) if output_dir else ROOT
+    generate_data(root / "data", rows, threads)
+    convert_data(root / "data", threads)
+    analyze_data(root / "data", root / "results", rows, threads, repeats)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--rows", type=positive, default=1_000_000)
     parser.add_argument("--threads", type=positive, default=min(4, os.cpu_count() or 1))
     parser.add_argument("--repeats", type=positive, default=3)
+    parser.add_argument("--output-dir", type=Path, help="Separate data/results directory")
     args = parser.parse_args()
-    run(args.rows, args.threads, args.repeats)
+    run(args.rows, args.threads, args.repeats, args.output_dir)

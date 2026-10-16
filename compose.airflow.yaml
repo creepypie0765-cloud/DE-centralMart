@@ -1,0 +1,36 @@
+# Local demonstration only. Standalone uses SQLite; use a production deployment
+# with a separate database and authenticated access for shared environments.
+name: central-mart
+services:
+  airflow:
+    build:
+      context: .
+      dockerfile: Dockerfile.airflow
+    command: standalone
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/project/dags
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "true"
+      AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_ALL_ADMINS: "true"
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__PARALLELISM: "4"
+      PYTHONPATH: /opt/project
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - airflow-state:/opt/airflow
+      - ./dags:/opt/project/dags:ro
+      - ./main.py:/opt/project/main.py:ro
+      - ./validation.py:/opt/project/validation.py:ro
+      - ./airflow_pipeline.py:/opt/project/airflow_pipeline.py:ro
+      - ./tests:/opt/project/tests:ro
+      - ./airflow-output:/opt/project/airflow-output
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/api/v2/monitor/health', timeout=5)"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 60s
+    restart: unless-stopped
+volumes:
+  airflow-state:

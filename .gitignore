@@ -1,4 +1,6 @@
 .venv/
+.test-venv/
 __pycache__/
 data/
 results/
+airflow-output/

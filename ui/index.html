@@ -5,14 +5,25 @@
 <title>Central Mart · Sales overview</title>
 <style>
 :root{font-family:Inter,Segoe UI,Arial,sans-serif;color:#17352e;background:#f3f5f1;font-size:15px}*{box-sizing:border-box}body{margin:0}header{background:#143d32;color:white;padding:22px max(5vw,20px);display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{font-size:21px;font-weight:750;letter-spacing:-.6px}.mark{background:#c5e997;color:#153f32;padding:7px 10px;border-radius:9px;margin-right:10px}.badge{border:1px solid #799b8a;padding:7px 12px;border-radius:30px;font-size:12px}main{max-width:1200px;margin:auto;padding:34px 24px}h1{font-size:34px;letter-spacing:-1.2px;margin:5px 0 10px}h2{font-size:17px;margin:0 0 9px}p{color:#68786e;line-height:1.6;margin:7px 0}.eyebrow{text-transform:uppercase;font-size:11px;font-weight:750;letter-spacing:1.7px;color:#5f7764}.intro{display:flex;justify-content:space-between;gap:24px;align-items:center;margin-bottom:25px}.controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}select,button{font:inherit;border-radius:8px;padding:11px 13px;border:1px solid #d5ded1;background:white;color:#17352e}button{background:#1d5945;color:white;cursor:pointer;font-weight:650;border-color:#1d5945}button:disabled{opacity:.55;cursor:wait}button:hover:enabled{background:#123e2f}a{color:#21624c;text-underline-offset:3px;font-size:12px}a:focus,button:focus,select:focus{outline:3px solid #9cc771;outline-offset:3px}.status{font-size:13px;margin:0 0 18px;padding:11px 15px;background:#e5eddf;border-radius:8px;color:#3b613c}.status.error{background:#ffe8e3;color:#9d3625}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}.card{background:white;border:1px solid #dfe5db;border-radius:13px;padding:21px}.metric-label{font-size:12px;color:#64766a}.number{font-size:27px;font-weight:750;letter-spacing:-.8px;margin:12px 0 7px}.hint{font-size:11px;color:#78867c}.panels{display:grid;grid-template-columns:1.15fr 1fr;gap:18px;margin-top:18px}.card-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:15px}.sub{font-size:12px;color:#6c7e70}.bar-row{margin:18px 0}.bar-label{display:flex;justify-content:space-between;font-size:12px;gap:10px;margin-bottom:7px}.track{height:10px;background:#edf2e9;border-radius:6px;overflow:hidden}.fill{height:100%;background:#397b59;border-radius:6px}.bar-row:nth-child(2n) .fill{background:#94b776}table{border-collapse:collapse;width:100%;font-size:12px}th{text-align:left;font-weight:600;color:#728072;border-bottom:1px solid #e2e8de}td,th{padding:12px 6px}td:last-child,th:last-child{text-align:right}tr+tr td{border-top:1px solid #f0f3ed}.table-wrap{overflow:auto}.pipeline{display:flex;gap:8px;align-items:stretch;margin-top:18px}.step{flex:1;background:#f1f5eb;padding:15px 12px;border-radius:8px;font-size:12px}.step b{display:block;margin-bottom:6px}.step span{color:#758371;line-height:1.5;font-size:11px}.arrow{align-self:center;color:#93a28d}.foot{font-size:11px;margin-top:15px}.empty{padding:20px;color:#6c7e70}.notice{margin-top:10px;font-size:11px}.benchmark .fill{background:#284d3d}.benchmark .parquet .fill{background:#a5c879}footer{display:flex;justify-content:space-between;gap:15px;margin-top:25px;font-size:11px;color:#7d8b7d} [hidden]{display:none!important}@media(max-width:800px){.intro{display:block}.controls{margin-top:18px}.grid{grid-template-columns:repeat(2,1fr)}.panels{grid-template-columns:1fr}.pipeline{flex-wrap:wrap}.step{min-width:40%}.arrow{display:none}.number{font-size:23px}h1{font-size:29px}}@media(max-width:420px){main{padding:25px 14px}.grid{gap:8px}.card{padding:15px}.badge{font-size:10px}header{padding:18px 14px}}
+.orchestrator{margin:25px 0;background:#fff;border:1px solid #dfe5db;border-radius:16px;overflow:hidden}.orchestration-head{padding:24px;background:#183f34;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:15px}.orchestration-head h2{font-size:23px;letter-spacing:-.5px}.orchestration-head p{color:#bad0c0;font-size:12px}.orchestration-head a{color:#d4efad}.pill{display:inline-block;border-radius:20px;padding:5px 9px;font-size:10px;font-weight:700;background:#edf1eb;color:#66766a;white-space:nowrap}.pill.success{background:#daf1da;color:#246239}.pill.running,.pill.queued,.pill.scheduled{background:#e2eaff;color:#355fba}.pill.failed,.pill.upstream_failed{background:#ffe4df;color:#ac3f31}.pill.up_for_retry{background:#fff0cc;color:#9a681d}.run-meta{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid #e4e9e0}.run-meta>div{padding:18px 22px;border-right:1px solid #e4e9e0}.run-meta small{display:block;color:#7a887d;font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}.run-meta strong{font-size:15px}.progress-wrap{padding:20px 23px 0}.stage-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:20px 23px}.stage-card{padding:16px;border:1px solid #e0e6dc;border-radius:10px;background:#fbfcfa}.stage-card.success{border-color:#bcd9b5}.stage-card.running{border-color:#6486bb;background:#f3f7ff}.stage-card.failed{border-color:#e3a196}.stage-title{display:flex;justify-content:space-between;align-items:center;gap:8px}.stage-index{font-size:10px;color:#84937f;font-weight:750}.stage-card h3{font-size:13px;margin:11px 0 7px}.stage-card p{font-size:11px;min-height:32px;line-height:1.5}.artifact{font-family:Consolas,monospace;font-size:10px;color:#4b6e55;padding:9px 0;border-top:1px solid #e7ece3;margin-top:11px;overflow-wrap:anywhere}.stage-foot{display:flex;justify-content:space-between;color:#83907f;font-size:10px}.run-history{padding:0 23px 23px}.download-grid{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}.download-grid a{padding:10px 12px;background:#f1f5eb;border:1px solid #dee7d6;border-radius:7px;text-decoration:none}.source-control{margin:14px 0;display:flex;align-items:center;gap:10px;font-size:12px}.source-control select{font-size:12px}.section-label{display:flex;align-items:center;justify-content:space-between;margin-top:30px;margin-bottom:16px}.section-label h2{font-size:21px}.connection-note{font-size:11px;margin:12px 23px 0;overflow-wrap:anywhere}.run-id{max-width:440px;overflow-wrap:anywhere;font-family:Consolas,monospace;font-size:10px}@media(max-width:800px){.stage-grid{grid-template-columns:repeat(2,1fr)}.run-meta{grid-template-columns:repeat(2,1fr)}.orchestration-head{align-items:flex-start;flex-direction:column}}@media(max-width:480px){.stage-grid{grid-template-columns:1fr}.orchestration-head,.stage-grid,.run-history{padding:17px}.run-meta>div{padding:13px}}
 </style>
 </head>
 <body>
 <header><div class="brand"><span class="mark">CM</span>Central Mart</div><div class="badge">Retail analytics · Synthetic data</div></header>
 <main>
-<div class="intro"><div><div class="eyebrow">Retail operations / 2025</div><h1>A clearer picture of your sales.</h1><p>Four stores. One local batch. The numbers that matter.</p></div>
+<div class="intro"><div><div class="eyebrow">Central Mart / Operations workspace</div><h1>From raw orders to clear decisions.</h1><p>Your pipeline, data quality and retail performance. In one place.</p></div>
 <div><div class="controls"><label for="rows" class="sub">Orders</label><select id="rows"><option value="10000">10,000</option><option value="100000" selected>100,000</option><option value="1000000">1,000,000</option></select><button id="run">Run demo batch</button></div><p class="notice">Replaces generated data and reports · 4 worker threads</p></div></div>
 <div id="status" class="status" role="status" aria-live="polite">Loading local reports…</div>
+<section class="orchestrator" aria-label="Airflow pipeline monitoring">
+<div class="orchestration-head"><div><div class="eyebrow" style="color:#b5d78e">Apache Airflow · DuckDB</div><h2 style="margin-top:8px">Every step. Full visibility.</h2><p>Creation → ingestion → conversion → processing → reports</p></div><div><span id="connection" class="pill">Connecting…</span><p><a href="http://localhost:8080/dags/central_mart_retail" target="_blank" rel="noopener">Open Airflow graph & logs ↗</a></p></div></div>
+<div class="run-meta"><div><small>Latest run</small><strong id="run-state">—</strong></div><div><small>Tasks completed</small><strong id="task-count">0 / 11</strong></div><div><small>Daily schedule</small><strong>11:30 AM IST</strong><div id="schedule-state" class="hint">Checking scheduler…</div></div><div><small>Execution</small><strong>LocalExecutor</strong><div class="hint">2 retries · 30s delay · 4 CPU threads</div></div></div>
+<p id="airflow-note" class="connection-note" role="status"></p>
+<div class="progress-wrap"><div class="track"><div id="pipeline-progress" class="fill" style="width:0%"></div></div></div>
+<div id="stage-grid" class="stage-grid"></div>
+<div class="run-history"><div class="card-head"><h2>Recent runs</h2><span class="sub">Live from Airflow · refreshes every 5 seconds</span></div><div id="history" class="table-wrap"><p class="sub">Waiting for Airflow…</p></div></div>
+</section>
+<div class="section-label"><h2>Retail performance</h2><span class="sub">Calendar year 2025 · Synthetic data</span></div>
+<div class="source-control"><label for="source">Run & report source</label><select id="source"><option value="local">Local demo batch</option><option value="airflow">Airflow pipeline</option></select><span id="source-hint" class="hint">Sales below show the selected source.</span></div>
 <section class="grid" aria-label="Sales summary">
 <div class="card"><div class="metric-label">Net sales</div><div class="number" id="sales">—</div><div class="hint">INR · discounts and full returns accounted for</div></div>
 <div class="card"><div class="metric-label">Orders received</div><div class="number" id="orders">—</div><div class="hint" id="completed">All final order statuses</div></div>
@@ -25,7 +36,7 @@
 <section class="card"><div class="card-head"><div><h2>Monthly sales</h2><div class="sub">Order month · final completed orders</div></div><a href="/download/monthly_revenue.csv" download>Download CSV</a></div><div id="months" class="table-wrap"></div></section>
 <section class="card benchmark"><div class="card-head"><div><h2>CSV vs. Parquet</h2><div class="sub">Store report · median query time</div></div><a href="/download/benchmark.json" download>Raw results</a></div><div id="bench"></div><p class="foot">Shorter is faster. Warm-cache measurements; performance varies by hardware and data size.</p><div id="statuses" class="foot"></div></section>
 </div>
-<section class="card" style="margin-top:18px"><h2>What happens behind the numbers?</h2><p class="sub">Local parallel processing with DuckDB — no Spark or Hadoop cluster required.</p><div class="pipeline"><div class="step"><b>01 / Generate CSV</b><span>Synthetic orders, stores and product catalog.</span></div><div class="arrow">→</div><div class="step"><b>02 / Store as Parquet</b><span>Compressed columns reduce storage and scanning.</span></div><div class="arrow">→</div><div class="step"><b>03 / Process in parallel</b><span>Join, filter and aggregate with CPU workers.</span></div><div class="arrow">→</div><div class="step"><b>04 / Report & validate</b><span>Compare results across formats and thread counts.</span></div></div></section>
+<section class="card" style="margin-top:18px"><h2>Reports & data quality</h2><p class="sub">Airflow reports appear after final reconciliation succeeds. Download the summary, execution plan and measured benchmarks.</p><div class="download-grid"><a href="/download/manager_summary.md" download>Manager summary ↓</a><a href="/download/order_status.csv" download>Order status ↓</a><a href="/download/query_plan.txt" download>DuckDB execution plan ↓</a><a href="/download/benchmark.json" download>Query benchmarks ↓</a><a id="manifest-link" href="/download/manifest.json?source=airflow" download hidden>Airflow file manifest ↓</a></div><p class="foot">Quality gates: unique order IDs · valid store/product references · valid quantities and discounts · independent revenue reconciliation. Cancelled and returned orders contribute no recognized sales.</p></section>
 <footer><span>Demonstration only · Fictional stores and transactions</span><span>DuckDB · Single-machine parallelism</span></footer>
 </main>
 <script>
@@ -58,13 +69,14 @@ let polling=false;
 async function refresh(){
  if(polling)return;polling=true;
  try{
-  const response=await fetch('/api/reports');const data=await response.json();if(!response.ok)throw Error(data.error||'Could not load reports.');
-  $('run').disabled=data.running;
+  const response=await fetch('/api/reports?source='+$('source').value);const data=await response.json();if(!response.ok)throw Error(data.error||'Could not load reports.');
+  $('run').disabled=$('source').value==='airflow'?(!airflowData?.connected||['running','queued'].includes(airflowData?.latest?.state)):data.running;
   $('status').classList.toggle('error',Boolean(data.error));
   if(data.running){$('status').textContent='Processing orders… generating CSV, converting to Parquet, running queries and validating reports. Previous results remain visible until this batch finishes.';}
   else{
    if(data.reports)render(data);
-   $('status').textContent=data.error?'Batch failed: '+data.error:(data.empty?'No reports yet. Choose an order count and run a demo batch.':'Validated · '+number.format(data.benchmark.rows)+' orders · CSV and Parquet query results match across thread counts.');
+   $('status').textContent=data.error?'Batch failed: '+data.error:(data.empty?($('source').value==='airflow'?'No validated Airflow reports yet. Trigger the pipeline to populate this view.':'No reports yet. Choose an order count and run a demo batch.'):'Validated · '+number.format(data.benchmark.rows)+' orders · CSV and Parquet query results match across thread counts.');
+   if(data.empty)clearReports();
   }
  }catch(e){$('status').classList.add('error');$('status').textContent='Unable to load reports: '+e.message+' Check that dashboard.py is running.';}
  finally{polling=false;}
@@ -72,11 +84,41 @@ async function refresh(){
 $('run').addEventListener('click',async()=>{
  $('run').disabled=true;
  try{
-  const response=await fetch('/api/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({rows:Number($('rows').value)})});
+  const response=await fetch($('source').value==='airflow'?'/api/airflow/run':'/api/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({rows:Number($('rows').value)})});
   const data=await response.json();if(!response.ok)throw Error(data.error||'Could not start batch.');
   await refresh();
+  await refreshAirflow();
  }catch(e){$('status').classList.add('error');$('status').textContent=e.message;$('run').disabled=false;}
 });
-refresh();setInterval(refresh,2500);
+function clearReports(){for(const id of ['sales','orders','returns','saving'])$(id).textContent='—';for(const id of ['products','months','bench','statuses'])$(id).textContent='';$('stores').innerHTML='<p class="sub">No validated results for this source.</p>';$('sizes').textContent='Compared with the CSV export';$('completed').textContent='All final order statuses';}
+let airflowPolling=false,airflowData=null;
+const duration=v=>v==null?'—':Number(v).toFixed(1)+'s';
+const dateLabel=v=>v?new Date(v).toLocaleString('en-IN',{timeZone:'Asia/Kolkata',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})+' IST':'—';
+async function refreshAirflow(){
+ if(airflowPolling)return;airflowPolling=true;
+ try{
+  const response=await fetch('/api/airflow');if(!response.ok)throw Error('Status service unavailable');
+  const data=await response.json();airflowData=data;
+  $('connection').textContent=data.connected?'Airflow connected':'Airflow offline';$('connection').className='pill '+(data.connected?'success':'');
+  const latest=data.latest,complete=data.stages.filter(s=>s.state==='success').length;
+  $('run-state').textContent=latest?latest.state.replaceAll('_',' '):(data.connected?'Ready to run':'Not connected');
+  $('task-count').textContent=complete+' / '+data.stages.length;
+  $('schedule-state').textContent=data.connected?(data.paused?'Paused · trigger enables schedule':'Schedule enabled'):'Scheduler unavailable';
+  $('pipeline-progress').style.width=(100*complete/data.stages.length)+'%';
+  $('airflow-note').textContent=data.connected?(latest?'Run: '+latest.dag_run_id+' · Started '+dateLabel(latest.start_date):'Choose Airflow pipeline below, then trigger a run.'):data.error+' Start it with docker compose -f compose.airflow.yaml up -d --build';
+  $('stage-grid').innerHTML=data.stages.map((s,i)=>`<article class="stage-card ${esc(s.state)}"><div class="stage-title"><span class="stage-index">STEP ${String(i+1).padStart(2,'0')}</span><span class="pill ${esc(s.state)}">${esc(s.state.replaceAll('_',' '))}</span></div><h3>${esc(s.name)}</h3><p>${esc(s.description)}</p><div class="artifact">${esc(s.artifact)}</div><div class="stage-foot"><span>Duration ${duration(s.duration)}</span><span>Attempt ${s.attempts||0}</span></div></article>`).join('');
+  $('history').innerHTML=data.runs.length?table(['Run ID','State','Started (IST)','Finished (IST)'],data.runs.map(r=>[r.dag_run_id,r.state,dateLabel(r.start_date),dateLabel(r.end_date)])):'<p class="sub">'+(data.connected?'No runs yet. Trigger the first batch.':'Start Airflow to view real run history.')+'</p>';
+  if($('source').value==='airflow')$('run').disabled=!data.connected||['running','queued'].includes(latest?.state);
+ }catch(e){$('connection').textContent='Connection error';$('airflow-note').textContent=e.message;}
+ finally{airflowPolling=false;}
+}
+$('source').addEventListener('change',()=>{
+ const active=$('source').value==='airflow';$('run').textContent=active?'Trigger Airflow run':'Run demo batch';
+ $('source-hint').textContent=active?'Latest successfully validated Airflow run · trigger also enables daily scheduling':'Local demo reports · runs independently of Airflow';
+ $('manifest-link').hidden=!active;
+ document.querySelectorAll('a[href^="/download/"]').forEach(a=>{a.href=a.getAttribute('href').split('?')[0]+(active?'?source=airflow':'');});
+ clearReports();refresh();refreshAirflow();
+});
+refresh();refreshAirflow();setInterval(refresh,2500);setInterval(refreshAirflow,5000);
 </script>
 </body></html>

@@ -1,4 +1,4 @@
-# Central Mart — DuckDB Retail Analytics
+# DE-centralMart — DuckDB & Airflow Retail Analytics
 
 A simple retail batch-processing mini project with a local web dashboard.
 Generate synthetic store orders, convert CSV to compressed Parquet, and compare
@@ -11,8 +11,8 @@ Install **Python 3.10 or newer** (3.12 or 3.13 recommended) and Git, or download
 this repository using GitHub's **Code → Download ZIP** and extract it first.
 
 ```sh
-git clone https://github.com/Harvhoax/DuckDB.git
-cd DuckDB
+git clone https://github.com/creepypie0765-cloud/DE-centralMart.git
+cd DE-centralMart
 ```
 
 **Windows:** double-click `start.bat`, or run:
@@ -48,6 +48,16 @@ locally to use the dashboard.
 - Downloadable CSV reports and raw benchmark results.
 - A visual explanation of the processing pipeline.
 - Run 10,000, 100,000, or 1,000,000 synthetic orders from the page.
+- Monitor all 11 Airflow stages, task states, durations, attempts and recent runs.
+- Choose local or Airflow reports; trigger Airflow runs directly from the dashboard.
+- Download the manager summary, query plan, benchmarks and Airflow artifact manifest.
+
+Start the dashboard with `python run.py` and Airflow separately with the Compose
+command below. Select **Airflow pipeline** as the run/report source to launch the
+full DAG. This also unpauses the daily schedule. Airflow status comes from its
+local REST API; offline stages are shown explicitly. Sales for the Airflow source
+come only from runs that passed final validation. The local demo remains available
+while Airflow is stopped.
 
 ## Business scenario
 
@@ -95,6 +105,69 @@ Each batch replaces generated data and results. Avoid running the command-line
 pipeline separately while a dashboard batch is active. Edit main.py to change
 catalog prices or generation rules; editing generated reference CSVs does not
 change the next run.
+
+## Apache Airflow
+
+The optional Airflow 3.1.8 setup shows the complete lifecycle as 11 real tasks:
+
+| Airflow task | Work and artifact |
+| --- | --- |
+| `create_workspace` | Isolated run directories and `run.json` configuration |
+| `create_reference_data` | Store and product catalog CSVs |
+| `generate_orders` | Synthetic order export in `sales.csv` |
+| `ingest_csv_to_duckdb` | CSV sources loaded into raw tables in `warehouse.duckdb` |
+| `validate_ingested_data` | Row counts, unique IDs, reference integrity and field checks |
+| `convert_to_parquet` | Ingested orders converted to compressed `sales.parquet` |
+| `join_filter_and_enrich` | Reference joins, discounts, revenue and completed-order filtering |
+| `aggregate_sales` | Persisted store, month, product and status report tables |
+| `benchmark_formats_and_threads` | CSV/Parquet timings, result parity and execution plan |
+| `export_reports` | CSV reports, manager summary, benchmark and `manifest.json` |
+| `validate_final_reports` | Independent raw-CSV reconciliation and summary in task logs |
+
+Install Docker Engine with Compose on Linux, or Docker Desktop with Linux
+containers on Windows/macOS. On Windows you can also use Docker Engine inside
+WSL2 Ubuntu. From the project directory in that environment:
+
+```sh
+mkdir -p airflow-output
+docker compose -f compose.airflow.yaml up -d --build
+```
+
+Open **http://localhost:8080**, select **central_mart_retail**, and click
+**Trigger**. Choose `rows` (default 100,000), `threads` (4), and `repeats` (3).
+Open the run's **Graph** view to watch each task, inspect logs, and retry failures.
+This local demo automatically grants administrator access, so the port is bound
+to loopback only. It uses Airflow standalone with SQLite and is intended for one
+local user; use an authenticated deployment and separate database for production.
+
+The DAG starts paused. Unpause it to enable its daily schedule at **06:00 UTC /
+11:30 India time**. Historical dates are not backfilled. Each task retries twice
+with a 30-second delay. Runs are serialized; each run writes to a separate
+`airflow-output/runs/<run-hash>/data` and `results` folder, preserving earlier runs
+and keeping dashboard-generated reports separate. The last task independently
+recalculates completed revenue from raw CSV and prints the manager summary and
+output path in its log. No order rows pass through XCom.
+
+Useful commands:
+
+```sh
+# Trigger a default run from the command line (unpause first for scheduling)
+docker compose -f compose.airflow.yaml exec airflow airflow dags unpause central_mart_retail
+docker compose -f compose.airflow.yaml exec airflow airflow dags trigger central_mart_retail
+# Check DAG parsing and service logs
+docker compose -f compose.airflow.yaml exec airflow airflow dags list-import-errors
+docker compose -f compose.airflow.yaml exec airflow python /opt/project/tests/check_airflow.py
+docker compose -f compose.airflow.yaml logs --tail 100 airflow
+# Stop while preserving Airflow history and generated reports
+docker compose -f compose.airflow.yaml down
+```
+
+Airflow's metadata and logs persist in the `airflow-state` Docker volume. Generated
+run files persist in `airflow-output/`. The original launcher and dashboard work
+without installing Airflow. The CLI also accepts `--output-dir PATH` for an
+isolated batch. Shared generation and benchmarking functions are in `main.py`;
+durable warehouse stages are in `airflow_pipeline.py`. Benchmarking intentionally
+reruns queries for comparison. Report exports use the persisted aggregation tables.
 
 ## Command-line processing
 

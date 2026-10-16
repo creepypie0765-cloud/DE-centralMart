@@ -18,7 +18,7 @@ class SmokeTest(unittest.TestCase):
     def test_fresh_checkout_dashboard_and_batch(self):
         with tempfile.TemporaryDirectory(prefix='retail demo ') as folder:
             work = Path(folder)
-            for name in ('main.py', 'dashboard.py'):
+            for name in ('main.py', 'dashboard.py', 'orchestration.py'):
                 shutil.copy2(ROOT / name, work / name)
             shutil.copytree(ROOT / 'ui', work / 'ui')
             server = subprocess.Popen([sys.executable, '-u', str(work / 'dashboard.py'), '--port', '0'],

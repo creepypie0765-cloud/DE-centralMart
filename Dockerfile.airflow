@@ -1,0 +1,14 @@
+FROM python:3.12-slim-bookworm
+ENV AIRFLOW_HOME=/opt/airflow \
+    HOME=/home/airflow \
+    PYTHONUNBUFFERED=1
+COPY requirements.txt /tmp/project-requirements.txt
+RUN pip install --no-cache-dir "apache-airflow==3.1.8" \
+      --constraint https://raw.githubusercontent.com/apache/airflow/constraints-3.1.8/constraints-3.12.txt \
+    && pip install --no-cache-dir "apache-airflow==3.1.8" -r /tmp/project-requirements.txt \
+    && useradd --uid 50000 --create-home airflow \
+    && mkdir -p /opt/airflow \
+    && chown airflow:airflow /opt/airflow
+USER airflow
+WORKDIR /opt/airflow
+ENTRYPOINT ["airflow"]
