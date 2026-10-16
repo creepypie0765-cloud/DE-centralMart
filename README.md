@@ -133,7 +133,7 @@ mkdir -p airflow-output
 docker compose -f compose.airflow.yaml up -d --build
 ```
 
-Open **http://localhost:8080**, select **central_mart_retail**, and click
+Open **http://localhost:8082**, select **central_mart_retail**, and click
 **Trigger**. Choose `rows` (default 100,000), `threads` (4), and `repeats` (3).
 Open the run's **Graph** view to watch each task, inspect logs, and retry failures.
 This local demo automatically grants administrator access, so the port is bound

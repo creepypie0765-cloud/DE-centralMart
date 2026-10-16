@@ -2,9 +2,14 @@
 from datetime import datetime, timezone
 import json
 from urllib.parse import quote
-from urllib.request import Request, urlopen
+from urllib.request import Request, build_opener, ProxyHandler
+from urllib.error import HTTPError
+import time
+import os
 
-AIRFLOW_URL = 'http://127.0.0.1:8080'
+AIRFLOW_URL = os.environ.get('CENTRAL_MART_AIRFLOW_URL', 'http://127.0.0.1:8082')
+_token = None
+_token_time = 0
 DAG_ID = 'central_mart_retail'
 STAGES = [
     ('create_workspace', 'Create workspace', 'Run folders and configuration', 'run.json'),
@@ -22,11 +27,22 @@ STAGES = [
 
 
 def airflow_request(path, method='GET', payload=None):
+    global _token, _token_time
+    opener = build_opener(ProxyHandler({}))
+    if not _token or time.monotonic() - _token_time > 300:
+        with opener.open(AIRFLOW_URL + '/auth/token', timeout=5) as response:
+            _token = json.load(response)['access_token']
+            _token_time = time.monotonic()
     request = Request(AIRFLOW_URL + '/api/v2' + path, method=method,
                       data=json.dumps(payload).encode() if payload is not None else None,
-                      headers={'Content-Type': 'application/json'})
-    with urlopen(request, timeout=5) as response:
-        return json.load(response)
+                      headers={'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _token})
+    try:
+        with opener.open(request, timeout=5) as response:
+            return json.load(response)
+    except HTTPError as exc:
+        if exc.code == 401:
+            _token = None
+        raise
 
 
 def airflow_status():

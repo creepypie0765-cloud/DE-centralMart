@@ -16,7 +16,7 @@ services:
       AIRFLOW__CORE__PARALLELISM: "4"
       PYTHONPATH: /opt/project
     ports:
-      - "127.0.0.1:8080:8080"
+      - "127.0.0.1:8082:8080"
     volumes:
       - airflow-state:/opt/airflow
       - ./dags:/opt/project/dags:ro

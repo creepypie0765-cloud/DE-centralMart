@@ -1,4 +1,4 @@
-"""Optional live integration check: run with Airflow started on localhost:8080."""
+"""Optional live integration check: run with Airflow started on localhost:8082."""
 from pathlib import Path
 import sys
 import time
