@@ -72,7 +72,8 @@ def export_reports(output, threads):
             order = query.split('ORDER BY', 1)[1]
             con.execute(f'COPY (SELECT * FROM report_{name} ORDER BY {order}) TO {sql_path(results / (name + ".csv"))} (HEADER, FORMAT CSV)')
     for name in ('benchmark.json', 'query_plan.txt', 'manager_summary.md'):
-        shutil.copy2(output / 'benchmark-work' / name, results / name)
+        # Windows-mounted folders may reject Unix metadata changes (copystat).
+        shutil.copyfile(output / 'benchmark-work' / name, results / name)
     manifest = {'reports': [p.name for p in sorted(results.iterdir())], 'output': str(output)}
     (results / 'manifest.json').write_text(json.dumps(manifest, indent=2))
     print(f'Exported CSV reports, summary, benchmark and manifest to {results}')
